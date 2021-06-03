@@ -1,4 +1,4 @@
-module github.com/phoenixway/rbs3
+module github.com/phoenixway/robinscript
 
 go 1.16
 

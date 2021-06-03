@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 	"regexp"
@@ -8,9 +9,38 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/phoenixway/robinscript/users"
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
+
+type NetworkHub struct {
+	UsernameByIP map[string]string
+}
+
+func (h *NetworkHub) Init() {
+	h.UsernameByIP = map[string]string{}
+}
+
+func (h *NetworkHub) IsNewConnection(ip string) bool {
+	if h.UsernameByIP[ip] != "" {
+		return false
+	} else {
+		return true
+	}
+}
+
+func (h *NetworkHub) IsAuthenticated(ip string) bool {
+	return (h.UsernameByIP[ip] != "") && (h.UsernameByIP[ip] != "Guest")
+}
+
+func (h *NetworkHub) DoLogin(ip, login, pass string) users.UserAccount {
+
+}
+
+func (h *NetworkHub) ProcessWSSignal() {
+
+}
 
 var (
 	upgrader = websocket.Upgrader{}
@@ -26,16 +56,14 @@ var (
 	}
 )
 
-func authenticate(name string) {
+func authenticate(login string) {
 	logger.Debug("Autothentication started!")
-	logger.Debug("User's name: " + name)
+	logger.Debug(fmt.Sprintf("User's login: %s", login))
 }
 
 func handleCommand(com string) {
 	logger.Debug("Command received: " + com)
-
 	isAuth := regexp.MustCompile(`/auth (\w+)`)
-	logger.Debug(isAuth.MatchString(com))
 	switch {
 	case isAuth.MatchString(com):
 		authenticate(isAuth.FindStringSubmatch(com)[1])
@@ -45,7 +73,7 @@ func handleCommand(com string) {
 }
 
 func handleText(ws *websocket.Conn, text string) {
-	answer := "You said: " + text
+	answer := fmt.Sprintf("You said: %s", text)
 	err := ws.WriteMessage(websocket.TextMessage, []byte(answer))
 	logger.Debug("Server> " + answer)
 	if err != nil {
