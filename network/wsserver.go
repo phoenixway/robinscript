@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
-	"github.com/phoenixway/robinscript/aicore"
+	"github.com/phoenixway/robinscript/ai"
 	"github.com/sirupsen/logrus"
 )
 
@@ -82,7 +82,7 @@ func (r *RobibWSServer) handleText(ws *websocket.Conn, ip, msg string) {
 	hub.Init()
 	u := hub.UserByIP(ip)
 	//TODO: change it to sending to channel
-	answer := aicore.ProcessMessage(u, msg)
+	answer := ai.ProcessMessage(u, msg)
 	answer = fmt.Sprintf("Client said: %s", msg)
 	err := ws.WriteMessage(websocket.TextMessage, []byte(answer))
 	r.logger.Debug("Server> " + answer)
