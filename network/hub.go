@@ -4,15 +4,15 @@ import (
 	"github.com/phoenixway/robinscript/users"
 )
 
-type NetworkHub struct {
+type Hub struct {
 	UsernameByIP map[string]string
 }
 
-func (h *NetworkHub) Init() {
+func (h *Hub) Init() {
 	h.UsernameByIP = map[string]string{}
 }
 
-func (h *NetworkHub) IsNewConnection(ip string) bool {
+func (h *Hub) IsNewConnection(ip string) bool {
 	if h.UsernameByIP[ip] != "" {
 		return false
 	} else {
@@ -20,18 +20,18 @@ func (h *NetworkHub) IsNewConnection(ip string) bool {
 	}
 }
 
-func (h *NetworkHub) IsAuthenticated(ip string) bool {
+func (h *Hub) IsAuthenticated(ip string) bool {
 	return (h.UsernameByIP[ip] != "") && (h.UsernameByIP[ip] != "Guest")
 }
 
-func (h *NetworkHub) DoLogin(ip, login, pass string) users.UserAccount {
+func (h *Hub) DoLogin(ip, login, pass string) users.UserAccount {
 	return users.UserAccount{}
 }
 
-func (h *NetworkHub) ProcessWSSignal() {
+func (h *Hub) ProcessWSSignal() {
 
 }
 
-func (h *NetworkHub) Disconnect(ip string) {
+func (h *Hub) Disconnect(ip string) {
 
 }
