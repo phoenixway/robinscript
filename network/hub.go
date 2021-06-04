@@ -1,7 +1,7 @@
 package network
 
 import (
-	"github.com/phoenixway/robinscript/aicore"
+	"github.com/phoenixway/robinscript/ai"
 	"github.com/phoenixway/robinscript/users"
 )
 
@@ -33,7 +33,7 @@ func (h *Hub) ProcessWSSignal(ip, message string) {
 	//TODO: remove this func
 	u := h.UserByIP(ip)
 	//TODO: change it to sending to channel
-	aicore.ProcessMessage(u, message)
+	ai.ProcessMessage(u, message)
 }
 
 func (h *Hub) Disconnect(ip string) {
