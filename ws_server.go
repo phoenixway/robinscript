@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"net"
 	"net/http"
 	"os"
 	"regexp"
@@ -9,6 +10,8 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+	"github.com/phoenixway/robinscript/aicore"
+	"github.com/phoenixway/robinscript/network"
 	"github.com/sirupsen/logrus"
 	prefixed "github.com/x-cray/logrus-prefixed-formatter"
 )
@@ -43,8 +46,14 @@ func handleCommand(com string) {
 	}
 }
 
-func handleText(ws *websocket.Conn, text string) {
-	answer := fmt.Sprintf("You said: %s", text)
+func handleText(ws *websocket.Conn, ip, text string) {
+
+	var hub = network.Hub{}
+	hub.Init()
+	u := hub.UserByIP(ip)
+	//TODO: change it to sending to channel
+	answer := aicore.ProcessMessage(u, text)
+	answer = fmt.Sprintf("Client said: %s", text)
 	err := ws.WriteMessage(websocket.TextMessage, []byte(answer))
 	logger.Debug("Server> " + answer)
 	if err != nil {
@@ -56,6 +65,8 @@ func handleText(ws *websocket.Conn, text string) {
 func handleWebsockets(c echo.Context) error {
 
 	ws, err := upgrader.Upgrade(c.Response(), c.Request(), nil)
+	ip, _, err := net.SplitHostPort(c.Request().RemoteAddr)
+
 	if err != nil {
 		logger.Error(err)
 		return err
@@ -76,7 +87,7 @@ func handleWebsockets(c echo.Context) error {
 		case isCommand.MatchString(string(msg)):
 			handleCommand(string(msg))
 		default:
-			handleText(ws, string(msg))
+			handleText(ws, ip, string(msg))
 		}
 
 	}
