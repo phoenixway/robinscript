@@ -18,18 +18,18 @@ import (
 type RobibWSServer struct {
 	upgrader websocket.Upgrader
 	logger   *logrus.Logger
-	msg      chan types.Message
+	messages chan types.Message
 	wg       *sync.WaitGroup
 }
 
-func (r *RobibWSServer) Init(logger *logrus.Logger, hub Hub) {
+func (r *RobibWSServer) Init(logger *logrus.Logger, hub ConnectedUsers) {
 	r.logger = logger
 }
 
 func (r *RobibWSServer) Start(wg *sync.WaitGroup, msg chan types.Message) {
 	defer wg.Done()
 	r.logger.Debugf("Websocket server started!")
-	r.msg = msg
+	r.messages = msg
 	r.wg = wg
 	r.upgrader = websocket.Upgrader{}
 	e := echo.New()
@@ -59,7 +59,7 @@ func (r *RobibWSServer) handleWebsockets(c echo.Context) error {
 			r.logger.Error(err)
 			os.Exit(1)
 		}
-		m := types.Message{string(msg), ws}
+		m := types.Message{Text: string(msg), Ws: ws}
 		r.logger.Info("User> " + string(msg))
 
 		isCommand := regexp.MustCompile(`^/.+`)
@@ -80,7 +80,7 @@ func (r *RobibWSServer) handleCommand(s string) {
 		//authenticate(isAuth.FindStringSubmatch(com)[1])
 	default:
 		//TODO: add /quit command
-		close(r.msg)
+		close(r.messages)
 		r.logger.Debugf("Websocket server stopped!")
 		return
 	}
@@ -89,17 +89,7 @@ func (r *RobibWSServer) handleCommand(s string) {
 
 func (r *RobibWSServer) handleText(m types.Message) {
 
-	var hub = Hub{}
+	var hub = ConnectedUsers{}
 	hub.Init()
-	//u := hub.UserByIP(ip)
-	//TODO: change it to sending to channel
-	// answer := ai.ProcessMessage(u, msg)
-	// answer = fmt.Sprintf("Client said: %s", msg)
-	r.msg <- m
-	//err := ws.WriteMessage(websocket.TextMessage, []byte(answer))
-	// r.logger.Debug("Server> " + answer)
-	// if err != nil {
-	// 	r.logger.Error(err)
-	// 	os.Exit(1)
-	// }
+	r.messages <- m
 }

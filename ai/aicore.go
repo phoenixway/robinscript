@@ -35,7 +35,7 @@ func (ai *AICore) Start(wg *sync.WaitGroup, msg chan types.Message, reply chan t
 		}
 		logger.Debugf("AI got '%s'!", m.Text)
 		answer := fmt.Sprintf("echo reply from '%s'", m.Text)
-		r := types.Reply{answer, m.Ws}
+		r := types.Reply{Text: answer, Ws: m.Ws}
 		reply <- r
 	}
 

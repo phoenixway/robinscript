@@ -31,7 +31,7 @@ func executor(wg *sync.WaitGroup, reply chan types.Reply) {
 		r := <-reply
 		logger.Debugf("Executor got \"%s\"!", r.Text)
 		err := r.Ws.WriteMessage(websocket.TextMessage, []byte(r.Text))
-		logger.Debug("Robin> " + r.Text)
+		logger.Info("Robin> " + r.Text)
 		if err != nil {
 			logger.Error(err)
 			os.Exit(1)
@@ -40,24 +40,24 @@ func executor(wg *sync.WaitGroup, reply chan types.Reply) {
 }
 
 func main() {
-	msg := make(chan types.Message)
-	reply := make(chan types.Reply)
+	messages := make(chan types.Message)
+	replies := make(chan types.Reply)
 
-	hub := network.Hub{}
-	hub.Init()
+	connectedUsers := network.ConnectedUsers{}
+	connectedUsers.Init()
 
 	ai := ai.AICore{}
 
-	robin_server := new(network.RobibWSServer)
-	robin_server.Init(logger, hub)
+	ws_server := new(network.RobibWSServer)
+	ws_server.Init(logger, connectedUsers)
 
 	wg := new(sync.WaitGroup)
 	wg.Add(3)
 
-	go robin_server.Start(wg, msg)
-	go ai.Start(wg, msg, reply, logger)
-	go executor(wg, reply)
+	go ws_server.Start(wg, messages)
+	go ai.Start(wg, messages, replies, logger)
+	go executor(wg, replies)
 	wg.Wait()
 
-	logger.Infoln("main finished")
+	logger.Infoln("main() is finished!")
 }

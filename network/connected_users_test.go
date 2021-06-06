@@ -5,7 +5,7 @@ import (
 )
 
 func TestHub(t *testing.T) {
-	var h = Hub{}
+	var h = ConnectedUsers{}
 	h.Init()
 	ip := "192.168.1.1"
 	message := "hello"

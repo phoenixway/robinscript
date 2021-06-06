@@ -5,15 +5,15 @@ import (
 	"github.com/phoenixway/robinscript/users"
 )
 
-type Hub struct {
+type ConnectedUsers struct {
 	UsernameByIP map[string]string
 }
 
-func (h *Hub) Init() {
+func (h *ConnectedUsers) Init() {
 	h.UsernameByIP = map[string]string{}
 }
 
-func (h *Hub) IsNewConnection(ip string) bool {
+func (h *ConnectedUsers) IsNewConnection(ip string) bool {
 	if h.UsernameByIP[ip] != "" {
 		return false
 	} else {
@@ -21,26 +21,26 @@ func (h *Hub) IsNewConnection(ip string) bool {
 	}
 }
 
-func (h *Hub) IsAuthenticated(ip string) bool {
+func (h *ConnectedUsers) IsAuthenticated(ip string) bool {
 	return (h.UsernameByIP[ip] != "") && (h.UsernameByIP[ip] != "Guest")
 }
 
-func (h *Hub) DoLogin(ip, login, pass string) users.UserAccount {
+func (h *ConnectedUsers) DoLogin(ip, login, pass string) users.UserAccount {
 	return users.UserAccount{}
 }
 
-func (h *Hub) ProcessWSSignal(ip, message string) {
+func (h *ConnectedUsers) ProcessWSSignal(ip, message string) {
 	//TODO: remove this func
 	u := h.UserByIP(ip)
 	//TODO: change it to sending to channel
 	ai.ProcessMessage(u, message)
 }
 
-func (h *Hub) Disconnect(ip string) {
+func (h *ConnectedUsers) Disconnect(ip string) {
 
 }
 
-func (h *Hub) UserByIP(ip string) *users.UserAccount {
+func (h *ConnectedUsers) UserByIP(ip string) *users.UserAccount {
 	if h.IsNewConnection(ip) {
 		//and if it's not a command to login and there is no guest account - create guest account
 		//if its command to login restore or create user account
