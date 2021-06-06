@@ -12,13 +12,12 @@ import (
 
 var (
 	logger = &logrus.Logger{
-		Out:   os.Stderr,
-		Level: logrus.DebugLevel,
-		Formatter: &prefixed.TextFormatter{
-			ForceColors:     true,
-			TimestampFormat: "15:04:05",
-			FullTimestamp:   true,
-			ForceFormatting: true,
+		Out:          os.Stderr,
+		Hooks:        map[logrus.Level][]logrus.Hook{},
+		Formatter:    &prefixed.TextFormatter{ForceColors: true, TimestampFormat: "15:04:05", FullTimestamp: true, ForceFormatting: true},
+		ReportCaller: false,
+		Level:        logrus.DebugLevel,
+		ExitFunc: func(int) {
 		},
 	}
 )
