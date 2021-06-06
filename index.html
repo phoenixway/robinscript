@@ -82,7 +82,7 @@
                 webSocket = new WebSocket(webSocketURL);
                 webSocket.onopen = function(openEvent) {
                     console.log("WebSocket OPEN: " + JSON.stringify(openEvent, null, 4));
-                    document.getElementById("incomingMsgOutput").value += "Server opened!" + "\r\n";
+                    document.getElementById("incomingMsgOutput").value += "Robin server opened!" + "\r\n";
                     document.getElementById("btnSend").disabled       = false;
                     document.getElementById("btnConnect").disabled    = true;
                     document.getElementById("btnDisconnect").disabled = false;
@@ -102,7 +102,7 @@
                     if (wsMsg.indexOf("error") > 0) {
                         document.getElementById("incomingMsgOutput").value += "error: " + wsMsg.error + "\r\n";
                     } else {
-                        document.getElementById("incomingMsgOutput").value += "Server> " + wsMsg + "\r\n";
+                        document.getElementById("incomingMsgOutput").value += "Robin server> " + wsMsg + "\r\n";
                     }
                 };
             } catch (exception) {

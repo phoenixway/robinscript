@@ -13,7 +13,7 @@ func TestConcurrentLogic(t *testing.T) {
 	wg.Add(3)
 	go wsserver(t, wg, msg)
 	go ai_engine(t, wg, msg, reply)
-	go executor(t, wg, reply)
+	go executorr(t, wg, reply)
 	wg.Wait()
 	fmt.Println("main finished")
 }
@@ -45,7 +45,7 @@ func ai_engine(t *testing.T, wg *sync.WaitGroup, msg, reply chan string) {
 	}
 }
 
-func executor(t *testing.T, wg *sync.WaitGroup, reply chan string) {
+func executorr(t *testing.T, wg *sync.WaitGroup, reply chan string) {
 	t.Logf("executor started\n")
 	defer wg.Done()
 	for {
