@@ -25,6 +25,7 @@ func wsserver(t *testing.T, wg *sync.WaitGroup, msg chan string) {
 	msg <- "message2"
 	msg <- "message3"
 	close(msg)
+	t.Logf("wsserver finished\n")
 }
 
 func ai_engine(t *testing.T, wg *sync.WaitGroup, msg, reply chan string) {
